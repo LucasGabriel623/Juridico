@@ -1,41 +1,43 @@
 <?php
+
     include('../../banco/conexao.php');
 
     if($conexao){
+
         $requestData = $_REQUEST;
 
-        if (!empty($requestData['nome']) && !empty($requestData['ativo'])) {
-            //$requestData = array_map('utf8_decode', $requestData);
-            $data = str_replace('/', '-', $requestData['dataagora']);
+        if(!empty($requestData['nome']) && !empty($requestData['ativo'])){
+
+            //$requestData = array_map('uft8_decode', $requestData);
+            $data = str_replace('/','-',$requestData['dataagora']);
             $data = date('Y-m-d H:i:s', strtotime($data));
             $requestData['ativo'] = $requestData['ativo'] == 'on' ? 'S' : 'N';
 
-            $sql = "INSERT INTO clientes (nome, telefone, email, ativo, datacriacao, datamodificacao) VALUES ('$requestData[nome]', '$requestData[telefone]', '$requestData[email]', '$requestData[ativo]', '$data', '$data')";
+            $sql = "INSERT INTO clientes (nome, telefone, email, ativo, datacriacao, datamodificacao) VALUES('$requestData[nome]', '$requestData[telefone]', '$requestData[email]', '$requestData[ativo]', '$data', '$data')";
 
             $resultado = mysqli_query($conexao, $sql);
-
-            if($resultado) {
+            if($resultado){
                 $dados = array(
                     'tipo' => TP_MSG_SUCCESS,
-                    'mensagem' => 'Cliente cadastrado com sucesso.'
+                    'mensagem' => "Cliente cadastrado com sucesso."
                 );
             } else {
                 $dados = array(
-                    'tipo' => TP_MSG_EROOR,
-                    'mensagem' => 'Erro ao cadastrar.'
+                    'tipo' => TP_MSG_ERROR,
+                    'mensagem' => "Não foi possível cadastrar o cliente."
                 );
             }
 
-        }else{
+        } else {
             $dados = array(
                 'tipo' => TP_MSG_INFO,
                 'mensagem' => MSG_CAMPOS_OBRIGATORIOS
             );
-        }
-
+        }  
+        
         mysqli_close($conexao);
 
-    }else{
+    } else {
         $dados = array(
             'tipo' => TP_MSG_INFO,
             'mensagem' => MSG_FALHA_CONEXAO
@@ -43,4 +45,3 @@
     }
 
     echo json_encode($dados);
-?>
