@@ -11,7 +11,11 @@
             $colunas = $requestData['columns'];
 
             //1ª etapa para a consulta do DataTable
-            $sql = "SELECT idcliente, nome, email, telefone, DATE_FORMAT(datamodificacao, '%d/%m/%Y %H:%i:%s') as datamodificacao, ativo FROM clientes WHERE 1=1 ";
+            $sql = "SELECT p.idprocesso, p.num_processo, p.titulo, DATE_FORMAT(p.dataprocesso, '%d/%m/%Y %H:%i:%s') as dataprocesso, DATE_FORMAT(p.dataencerramento, '%d/%m/%Y %H:%i:%s') as dataencerramento, t.nome as tipo_processo, c.nome as cliente
+            FROM processos p
+            INNER JOIN tipos_processos t ON t.idtipo_processo = p.idtipo_processo
+            INNER JOIN clientes c ON c.idcliente = p.idcliente 
+            WHERE 1=1 ";
 
             $resultado = mysqli_query($conexao, $sql);
             $totalRegistros = mysqli_num_rows($resultado);
@@ -19,8 +23,12 @@
             //2ª etapa para obter o total de registros filtrados
             $filtro = $requestData['search']['value'];
             if(!empty($filtro)){
-                $sql .= " AND (idcliente LIKE '$filtro%' ";
-                $sql .= " OR nome LIKE '$filtro%') "; 
+                $sql .= " AND (p.num_processo LIKE '$filtro%' ";
+                $sql .= " OR p.titulo LIKE '$filtro%' "; 
+                $sql .= " OR p.dataprocesso LIKE '$filtro%' "; 
+                $sql .= " OR p.dataencerramento LIKE '$filtro%' "; 
+                $sql .= " OR t.nome LIKE '$filtro%' "; 
+                $sql .= " OR c.nome LIKE '$filtro%') "; 
             }
 
             $resultado = mysqli_query($conexao, $sql);

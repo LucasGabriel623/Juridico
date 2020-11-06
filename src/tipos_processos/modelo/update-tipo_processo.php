@@ -1,5 +1,4 @@
 <?php
-
     include('../../banco/conexao.php');
 
     if($conexao){
@@ -10,22 +9,24 @@
 
             //$requestData = array_map('utf8_encode', $requestData);
 
+            $id = isset($requestData['idtipo_processo']) ? $requestData['idtipo_processo'] : '';
+            
             $data = str_replace('/','-',$requestData['dataagora']);
             $data = date('Y-m-d H:i:s', strtotime($data));
             $requestData['ativo'] = $requestData['ativo'] == 'on' ? 'S' : 'N';
 
-            $sql = "INSERT INTO clientes (nome, telefone, email, ativo, datacriacao, datamodificacao) VALUES('$requestData[nome]', '$requestData[telefone]', '$requestData[email]', '$requestData[ativo]', '$data', '$data')";
+            $sql = "UPDATE tipos_processos SET nome = '{$requestData['nome']}', ativo = '{$requestData['ativo']}', datamodificacao = '{$data}' WHERE idtipo_processo = $id";
 
             $resultado = mysqli_query($conexao, $sql);
             if($resultado){
                 $dados = array(
                     'tipo' => TP_MSG_SUCCESS,
-                    'mensagem' => "Cliente cadastrado com sucesso."
+                    'mensagem' => "Tipos processo alterado com sucesso."
                 );
             } else {
                 $dados = array(
                     'tipo' => TP_MSG_ERROR,
-                    'mensagem' => "Não foi possível cadastrar o cliente."
+                    'mensagem' => "Não foi possível alterar o tipos processo."
                 );
             }
 
